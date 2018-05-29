@@ -1,51 +1,65 @@
 // @flow
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import Navigation from './Navigation';
+import { Link } from 'react-router-dom';
 import Jumbotron from './Jumbotron';
-import Feed from './Feed';
-import Contact from './Contact';
-import About from './About';
-import data from '../data/data.json';
 import './App.css';
-
-const createMarkup = () => {
-return {__html: 'I am so fucking hack them all!'}
-}
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state ={
-      name: "Manny Henri",
-      jumbotronTitle: "List of courses",
-      feeds: [],
+      jumbotronTitle: "List of courses"
     }
   }
 
-  componentWillMount() {
-    this.setState({
-      feeds: data,
-    })
+  goTo(route) {
+    this.props.history.replace(`/${route}`)
   }
+
+  login() {
+    this.props.auth.login();
+  }
+
+  logout() {
+    this.props.auth.logout();
+  }
+
   render() {
+    const { isAuthenticated } = this.props.auth;
     return (
-      <Router>
-        <div className="container">
-          <Navigation />
-          <Jumbotron title={this.state.jumbotronTitle}/>
-          <Switch>
-            <Route path="/contact" component={Contact}/>
-            <Route path="/about" component={About}/>
-            <Route exact path="/" render={(props) => (
-              <Feed feeds={this.state.feeds} />
-            )} />
-          </Switch>
-          <div className="footer">
-            <p>&copy; {this.state.name} Inc.</p>
-          </div>
-        </div>
-      </Router>
+      // <div>
+      //   {
+      //     !isAuthenticated() && (
+      //       <Fragment>
+      //         <div className="header">
+      //           <ul className="nav nav-pills pull-right">
+      //             <li className="btn btn-primary" onClick={this.login.bind(this)}>Log In</li>
+      //           </ul>
+      //             <h3 className="text-muted">Securing React</h3>
+      //         </div>
+      //         <Jumbotron title={this.state.jumbotronTitle} />
+      //         </Fragment>
+      //     )
+      //   }
+      //   {
+      //     isAuthenticated() && (
+      //       <Fragment>
+      //         <div className="header">
+      //           <ul className="nav nav-pills pull-right">
+      //             <li><a onClick={this.goTo.bind(this, 'feed')}>Home</a></li>
+      //             <li><Link to='/about'>About</Link></li>
+      //             <li><Link to='/contact'>Contact</Link></li>
+      //             <li className="btn btn-primary" onClick={this.logout.bind(this)}>Log Out</li>
+
+      //           </ul>
+      //             <h3 className="text-muted">Securing React</h3>
+      //         </div>
+      //         <Jumbotron title={this.state.jumbotronTitle} />
+      //         </Fragment>
+      //     )
+      //   }
+      // </div>
+
     )
   }
 }
