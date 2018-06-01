@@ -5,6 +5,8 @@ import jwt from 'express-jwt';
 import cors from 'cors';
 import jwks from 'jwks-rsa';
 import bodyParser from 'body-parser';
+import jwtAuthz from 'express-jwt-authz';
+
 
 const app = express();
 
@@ -12,7 +14,21 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
-app.get('/courses', (req, res) => {
+const secureApi = jwt({
+  secret: jwks.expressJwtSecret({
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri: "https://sjb3.auth0.com/.well-known/jwks.json"
+  }),
+  audience: 'https://react-secure',
+  issuer: "https://sjb3.auth0.com/",
+  algorithms: ['RS256']
+});
+
+const checkScopes = jwtAuthz(['read.courses']);
+
+app.get('/courses', secureApi, checkScopes, (req, res) => {
   let courses = [
     {
       "id": 1,

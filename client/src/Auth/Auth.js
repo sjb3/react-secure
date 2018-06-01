@@ -7,9 +7,9 @@ export default class Auth {
     domain: AUTH_CONFIG.domain,
     clientID: AUTH_CONFIG.clientId,
     redirectUri: AUTH_CONFIG.callbackUrl,
-    audience: `https://${AUTH_CONFIG.domain}/userinfo`,
+    audience: AUTH_CONFIG.apiUrl,
     responseType: 'token id_token',
-    scope: 'openid'
+    scope: 'openid read.courses'
   });
 
   constructor() {
@@ -17,6 +17,7 @@ export default class Auth {
     this.logout = this.logout.bind(this);
     this.handleAuthentication = this.handleAuthentication.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
+    this.getAccessToken = this.getAccessToken.bind(this);
   }
 
   login() {
@@ -41,7 +42,7 @@ export default class Auth {
     if (!accessToken) {
       return new Error('No access token found');
     }
-    return accessToken; 
+    return accessToken;
   }
 
   setSession(authResult) {
@@ -64,7 +65,7 @@ export default class Auth {
   }
 
   isAuthenticated() {
-    // Check whether the current time is past the 
+    // Check whether the current time is past the
     // access token's expiry time
     let expiresAt = JSON.parse(localStorage.getItem('expires_at'));
     return new Date().getTime() < expiresAt;
